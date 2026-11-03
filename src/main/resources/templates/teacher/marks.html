@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Marks Management')}"></head>
+<body>
+
+<div th:replace="~{fragments/sidebar :: sidebar(${activePage})}"></div>
+
+<div id="sms-content">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="p-4">
+        <!-- Header -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+            <div>
+                <h3 class="fw-bold text-light mb-1">Examination Marks Entry & Publishing</h3>
+                <p class="text-secondary small mb-0">Record assessment scores, validate thresholds, save drafts, and publish verified results to students.</p>
+            </div>
+        </div>
+
+        <!-- Feedback Alerts -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show small py-2 px-3 mb-4" role="alert" style="background-color: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.3); color: #6EE7B7;">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <span th:text="${successMessage}">Success</span>
+            <button type="button" class="btn-close btn-close-white small" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show small py-2 px-3 mb-4" role="alert" style="background-color: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); color: #FCA5A5;">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <span th:text="${errorMessage}">Error</span>
+            <button type="button" class="btn-close btn-close-white small" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Class & Assessment Selector -->
+        <div class="sms-card p-3 mb-4">
+            <form th:action="@{/teacher/marks}" method="get" class="row g-2 align-items-center">
+                <div class="col-md-5">
+                    <label class="form-label text-secondary small mb-1 fw-semibold">Class Cohort</label>
+                    <select name="classId" class="form-select sms-input" onchange="this.form.submit()">
+                        <option value="">Select Assigned Class</option>
+                        <option th:each="c : ${classes}" th:value="${c.id}" th:text="${c.name} + ' (Sec ' + ${c.section} + ')'" th:selected="${c.id == selectedClassId}"></option>
+                    </select>
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label text-secondary small mb-1 fw-semibold">Scheduled Assessment Test</label>
+                    <select name="assessmentId" class="form-select sms-input" onchange="this.form.submit()">
+                        <option value="">Select Assessment</option>
+                        <option th:each="a : ${assessments}" th:value="${a.id}" th:text="'Test on ' + ${a.assessmentDate} + ' (Max: ' + ${a.maximumMarks} + ')'" th:selected="${a.id == selectedAssessmentId}"></option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-sms-primary w-100" style="margin-top: 1.8rem;">
+                        <i class="bi bi-arrow-clockwise me-1"></i> Load Roster
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Marks Entry Table -->
+        <div th:if="${currentAssessment != null}" class="sms-card">
+            <div class="sms-card-header">
+                <div>
+                    <span class="fw-bold text-light">Student Assessment Scores</span>
+                    <span th:if="${currentAssessment.status.name() == 'DRAFT'}" class="badge bg-warning-subtle text-warning border ms-2">DRAFT (Hidden from Students)</span>
+                    <span th:if="${currentAssessment.status.name() == 'PUBLISHED'}" class="badge bg-success-subtle text-success border ms-2">PUBLISHED (Visible to Students)</span>
+                </div>
+                <div class="small text-secondary">
+                    Max Marks: <span class="fw-bold text-light" th:text="${currentAssessment.maximumMarks}">50</span> | 
+                    Passing: <span class="fw-bold text-light" th:text="${currentAssessment.passingMarks}">20</span>
+                </div>
+            </div>
+
+            <form th:action="@{/teacher/marks/save-draft}" method="post">
+                <input type="hidden" name="assessmentId" th:value="${currentAssessment.id}">
+
+                <div class="sms-card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table sms-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Roll Number</th>
+                                    <th>Student Name</th>
+                                    <th style="width: 140px;">Marks Obtained</th>
+                                    <th>Absent</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${#lists.isEmpty(students)}">
+                                    <td colspan="5" class="text-center py-4 text-secondary">
+                                        No students enrolled in this class.
+                                    </td>
+                                </tr>
+                                <tr th:each="s : ${students}">
+                                    <td class="fw-bold text-primary" th:text="${s.rollNumber}">CSE-001</td>
+                                    <td class="fw-semibold text-light" th:text="${s.fullName}">Student Name</td>
+                                    <td>
+                                        <input type="number" step="0.5" min="0" th:max="${currentAssessment.maximumMarks}" 
+                                               class="form-control form-control-sm sms-input" 
+                                               th:name="'score_' + ${s.id}" 
+                                               th:value="${marksMap[s.id] != null ? marksMap[s.id].marksObtained : 0.0}" required>
+                                    </td>
+                                    <td>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" 
+                                                   th:name="'absent_' + ${s.id}" 
+                                                   th:checked="${marksMap[s.id] != null and marksMap[s.id].absent}">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control form-control-sm sms-input" 
+                                               th:name="'remarks_' + ${s.id}" 
+                                               th:value="${marksMap[s.id] != null ? marksMap[s.id].remarks : ''}" 
+                                               placeholder="Optional remark">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="p-3 border-top d-flex justify-content-between align-items-center" style="border-color: #334155 !important;">
+                    <span class="text-secondary small">
+                        <i class="bi bi-info-circle me-1"></i> Draft marks are saved securely and can be revised before publication.
+                    </span>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-sms-outline">
+                            <i class="bi bi-floppy me-1"></i> Save Draft
+                        </button>
+                    </form>
+
+                    <!-- Separate Publish Form -->
+                    <form th:action="@{/teacher/marks/publish}" method="post">
+                        <input type="hidden" name="assessmentId" th:value="${currentAssessment.id}">
+                        <button type="submit" class="btn btn-sms-primary" onclick="return confirm('Publish examination marks? Enrolled students will immediately receive access to their results.')">
+                            <i class="bi bi-send-check-fill me-1"></i> Publish Results
+                        </button>
+                    </form>
+                    </div>
+                </div>
+        </div>
+
+        <div th:unless="${currentAssessment != null}" class="sms-card p-5 text-center text-secondary">
+            <i class="bi bi-pencil-square fs-1 text-primary mb-2 d-block"></i>
+            <h5>Select a Class and Assessment Test above to enter or publish scores</h5>
+            <p class="small mb-0">Never allow marks exceeding test thresholds. Draft results remain strictly private.</p>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</div>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>
+

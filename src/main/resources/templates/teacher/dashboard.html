@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Faculty Dashboard')}"></head>
+<body>
+
+<div th:replace="~{fragments/sidebar :: sidebar(${activePage})}"></div>
+
+<div id="sms-content">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="p-4">
+        <!-- Page Header -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+            <div>
+                <h3 class="fw-bold text-light mb-1">
+                    Welcome, <span th:text="${userDetails != null ? userDetails.displayName : #authentication.name}">Faculty Member</span>
+                </h3>
+                <p class="text-secondary small mb-0">Department of Computer Science & Engineering | Fall 2025</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a th:href="@{/teacher/attendance}" class="btn btn-sms-primary d-flex align-items-center gap-2">
+                    <i class="bi bi-calendar-check"></i> Take Attendance
+                </a>
+                <a th:href="@{/teacher/marks}" class="btn btn-sms-outline d-flex align-items-center gap-2">
+                    <i class="bi bi-pencil-square"></i> Enter Marks
+                </a>
+            </div>
+        </div>
+
+        <!-- Metric Cards Grid -->
+        <div class="row g-3 mb-4">
+            <div class="col-sm-6 col-xl-3">
+                <div class="sms-card metric-card">
+                    <div>
+                        <div class="metric-title">Assigned Students</div>
+                        <div class="metric-value" th:text="${totalStudents}">48</div>
+                        <div class="small text-secondary mt-1">Across 2 class cohorts</div>
+                    </div>
+                    <div class="metric-icon-box metric-icon-blue">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xl-3">
+                <div class="sms-card metric-card">
+                    <div>
+                        <div class="metric-title">Today's Attendance</div>
+                        <div class="metric-value text-success" th:text="${todayAttendanceRate}">94.2%</div>
+                        <div class="small text-secondary mt-1">45 / 48 Enrolled Present</div>
+                    </div>
+                    <div class="metric-icon-box metric-icon-green">
+                        <i class="bi bi-person-check-fill"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xl-3">
+                <div class="sms-card metric-card">
+                    <div>
+                        <div class="metric-title">Assigned Classes</div>
+                        <div class="metric-value" th:text="${assignedClasses}">2</div>
+                        <div class="small text-secondary mt-1">CSE-5A, CSE-3B</div>
+                    </div>
+                    <div class="metric-icon-box metric-icon-yellow">
+                        <i class="bi bi-building"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xl-3">
+                <div class="sms-card metric-card">
+                    <div>
+                        <div class="metric-title">Assigned Subjects</div>
+                        <div class="metric-value" th:text="${assignedSubjects}">3</div>
+                        <div class="small text-secondary mt-1">DBMS, Networks, OS</div>
+                    </div>
+                    <div class="metric-icon-box metric-icon-blue">
+                        <i class="bi bi-journal-bookmark-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Middle Content Grid -->
+        <div class="row g-4 mb-4">
+            <!-- Today's Schedule -->
+            <div class="col-lg-7">
+                <div class="sms-card h-100">
+                    <div class="sms-card-header">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-clock-history text-primary"></i>
+                            <span>Today's Instructional Schedule</span>
+                        </div>
+                        <span class="badge bg-primary-subtle text-primary border small">Monday</span>
+                    </div>
+                    <div class="sms-card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table sms-table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Time Slot</th>
+                                        <th>Class</th>
+                                        <th>Subject</th>
+                                        <th>Room</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="fw-semibold text-primary">09:00 - 10:00</td>
+                                        <td>CSE 5th Sem - A</td>
+                                        <td>Database Management (CS501)</td>
+                                        <td><span class="badge bg-dark border text-secondary">Hall 302</span></td>
+                                        <td>
+                                            <a th:href="@{/teacher/attendance}" class="btn btn-sm btn-sms-primary py-0 px-2" style="font-size: 0.75rem;">
+                                                Roll Call
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-semibold text-primary">11:15 - 12:15</td>
+                                        <td>CSE 5th Sem - A</td>
+                                        <td>DBMS Lab Practical</td>
+                                        <td><span class="badge bg-dark border text-secondary">Lab 2</span></td>
+                                        <td>
+                                            <a th:href="@{/teacher/attendance}" class="btn btn-sm btn-sms-primary py-0 px-2" style="font-size: 0.75rem;">
+                                                Roll Call
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-semibold text-primary">14:00 - 15:00</td>
+                                        <td>CSE 3rd Sem - B</td>
+                                        <td>Data Structures</td>
+                                        <td><span class="badge bg-dark border text-secondary">Room 105</span></td>
+                                        <td>
+                                            <a th:href="@{/teacher/attendance}" class="btn btn-sm btn-sms-outline py-0 px-2" style="font-size: 0.75rem;">
+                                                Upcoming
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attendance & Performance Overview -->
+            <div class="col-lg-5">
+                <div class="sms-card h-100">
+                    <div class="sms-card-header">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-graph-up text-success"></i>
+                            <span>Class Attendance Analytics</span>
+                        </div>
+                        <span class="badge bg-success-subtle text-success border small" th:text="${overallAttendanceRate}">91.8%</span>
+                    </div>
+                    <div class="sms-card-body d-flex flex-column justify-content-between">
+                        <div style="height: 220px; position: relative;">
+                            <canvas id="attendanceChart"></canvas>
+                        </div>
+                        <div class="d-flex justify-content-around text-center pt-3 border-top mt-2" style="border-color: #334155 !important;">
+                            <div>
+                                <span class="d-block text-secondary small">Present Average</span>
+                                <span class="fw-bold text-success fs-5">92.4%</span>
+                            </div>
+                            <div>
+                                <span class="d-block text-secondary small">Late Tolerance</span>
+                                <span class="fw-bold text-warning fs-5">4.1%</span>
+                            </div>
+                            <div>
+                                <span class="d-block text-secondary small">Absence Rate</span>
+                                <span class="fw-bold text-danger fs-5">3.5%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Announcements & Upcoming Exams -->
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="sms-card">
+                    <div class="sms-card-header">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-megaphone-fill text-warning"></i>
+                            <span>College & Department Announcements</span>
+                        </div>
+                        <a th:href="@{/teacher/announcements}" class="text-primary small text-decoration-none">Manage</a>
+                    </div>
+                    <div class="sms-card-body">
+                        <div class="d-flex gap-3 pb-3 border-bottom" style="border-color: #334155 !important;">
+                            <div class="rounded p-2 text-center" style="background-color: #111827; min-width: 55px; height: 55px;">
+                                <span class="d-block fw-bold text-primary">15</span>
+                                <span class="d-block text-secondary" style="font-size: 0.65rem;">NOV</span>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold text-light mb-1">Midterm Examination Schedule Released</h6>
+                                <p class="text-secondary small mb-1">Midterm examinations for Semester 5 commence from November 20. Please verify draft syllabus coverage.</p>
+                                <span class="badge bg-dark border text-secondary" style="font-size: 0.7rem;">Target: All Students & Faculty</span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-3 pt-3">
+                            <div class="rounded p-2 text-center" style="background-color: #111827; min-width: 55px; height: 55px;">
+                                <span class="d-block fw-bold text-warning">08</span>
+                                <span class="d-block text-secondary" style="font-size: 0.65rem;">NOV</span>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold text-light mb-1">Grade Submission Deadline for Internal Assessment 1</h6>
+                                <p class="text-secondary small mb-1">All faculty members must publish marks for IA-1 by end of business Friday.</p>
+                                <span class="badge bg-dark border text-secondary" style="font-size: 0.7rem;">Target: Faculty Only</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="sms-card">
+                    <div class="sms-card-header">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-calendar-event-fill text-primary"></i>
+                            <span>Upcoming Examination Assessments</span>
+                        </div>
+                        <a th:href="@{/teacher/exams}" class="text-primary small text-decoration-none">View All</a>
+                    </div>
+                    <div class="sms-card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table sms-table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Exam Name</th>
+                                        <th>Subject</th>
+                                        <th>Max Marks</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Nov 22, 2025</td>
+                                        <td class="fw-semibold">Midterm Exam</td>
+                                        <td>Database Systems (CS501)</td>
+                                        <td>50</td>
+                                        <td><span class="badge bg-primary-subtle text-primary border small">Scheduled</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Nov 25, 2025</td>
+                                        <td class="fw-semibold">Midterm Exam</td>
+                                        <td>Computer Networks (CS503)</td>
+                                        <td>50</td>
+                                        <td><span class="badge bg-primary-subtle text-primary border small">Scheduled</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Dec 05, 2025</td>
+                                        <td class="fw-semibold">Lab Practical</td>
+                                        <td>DBMS Practical Exam</td>
+                                        <td>25</td>
+                                        <td><span class="badge bg-secondary-subtle text-secondary border small">Draft</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</div>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+
+<script>
+    // Attendance Chart Initialization
+    const ctx = document.getElementById('attendanceChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+            datasets: [{
+                label: 'Attendance %',
+                data: [94.2, 91.5, 93.8, 92.0, 95.1],
+                borderColor: '#10B981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.35,
+                pointBackgroundColor: '#10B981',
+                pointRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    min: 80,
+                    max: 100,
+                    grid: { color: 'rgba(51, 65, 85, 0.5)' },
+                    ticks: { color: '#94A3B8', font: { size: 11 } }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#94A3B8', font: { size: 11 } }
+                }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

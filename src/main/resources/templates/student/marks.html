@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('My Marks')}"></head>
+<body>
+
+<div th:replace="~{fragments/sidebar :: sidebar(${activePage})}"></div>
+
+<div id="sms-content">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="p-4">
+        <!-- Page Header -->
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h4 class="fw-bold text-light mb-1"><i class="bi bi-file-earmark-text-fill text-primary me-2"></i>My Examination Results</h4>
+                <p class="text-secondary small mb-0">Published results only — draft marks are not visible</p>
+            </div>
+            <span class="badge bg-success-subtle text-success border"><i class="bi bi-shield-check me-1"></i>Published Results</span>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-sm-6 col-xl-3">
+                <div class="sms-card metric-card">
+                    <div>
+                        <div class="metric-title">Examinations Taken</div>
+                        <div class="metric-value" th:text="${totalExams != null ? totalExams : 0}">0</div>
+                        <div class="small text-secondary mt-1">Published assessments</div>
+                    </div>
+                    <div class="metric-icon-box metric-icon-blue">
+                        <i class="bi bi-clipboard2-check-fill"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="sms-card metric-card">
+                    <div>
+                        <div class="metric-title">Average Score</div>
+                        <div class="metric-value text-success" th:text="${avgScore != null ? avgScore : 'N/A'}">N/A</div>
+                        <div class="small text-secondary mt-1">Across all subjects</div>
+                    </div>
+                    <div class="metric-icon-box metric-icon-green">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="sms-card metric-card">
+                    <div>
+                        <div class="metric-title">Highest Score</div>
+                        <div class="metric-value text-primary" th:text="${highestScore != null ? highestScore : 'N/A'}">N/A</div>
+                        <div class="small text-secondary mt-1">Best performance</div>
+                    </div>
+                    <div class="metric-icon-box metric-icon-yellow">
+                        <i class="bi bi-trophy-fill"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="sms-card metric-card">
+                    <div>
+                        <div class="metric-title">Current GPA</div>
+                        <div class="metric-value text-primary" th:text="${currentGpa != null ? currentGpa : 'N/A'}">N/A</div>
+                        <div class="small text-secondary mt-1">Semester GPA</div>
+                    </div>
+                    <div class="metric-icon-box metric-icon-blue">
+                        <i class="bi bi-award-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Published Marks Table -->
+        <div class="sms-card">
+            <div class="sms-card-header">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-table text-primary"></i>
+                    <span>Published Examination Marks</span>
+                </div>
+            </div>
+            <div class="sms-card-body p-0">
+                <div th:if="${marks != null and !marks.isEmpty()}">
+                    <div class="table-responsive">
+                        <table class="table sms-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Examination</th>
+                                    <th>Subject</th>
+                                    <th>Type</th>
+                                    <th>Score</th>
+                                    <th>Max Marks</th>
+                                    <th>Percentage</th>
+                                    <th>Grade</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="mark : ${marks}">
+                                    <td class="fw-semibold" th:text="${mark.examName}">Exam Name</td>
+                                    <td th:text="${mark.subjectName}">Subject</td>
+                                    <td>
+                                        <span class="badge bg-dark border text-secondary small" th:text="${mark.examType}">Internal</span>
+                                    </td>
+                                    <td class="fw-bold text-success" th:text="${mark.marksObtained}">0</td>
+                                    <td class="text-secondary" th:text="${mark.maxMarks}">0</td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="progress flex-grow-1" style="height: 5px; background: #1E293B; min-width: 60px;">
+                                                <div class="progress-bar bg-success" role="progressbar"
+                                                     th:style="'width: ' + mark.percentage + '%'"></div>
+                                            </div>
+                                            <span class="text-secondary small" th:text="${mark.percentage + '%'}">0%</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-primary text-white" th:text="${mark.grade != null ? mark.grade : '-'}">A</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success-subtle text-success border small">Published</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Empty state -->
+                <div th:if="${marks == null or marks.isEmpty()}" class="text-center py-5 text-secondary">
+                    <i class="bi bi-file-earmark-x fs-1 opacity-50"></i>
+                    <p class="mt-3 mb-1 fw-semibold">No published results yet</p>
+                    <p class="small">Your teacher has not published any examination results yet. Check back later.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</div>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>
+

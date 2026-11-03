@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('My Timetable')}"></head>
+<body>
+
+<div th:replace="~{fragments/sidebar :: sidebar(${activePage})}"></div>
+
+<div id="sms-content">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="p-4">
+        <!-- Page Header -->
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h4 class="fw-bold text-light mb-1"><i class="bi bi-clock-history text-primary me-2"></i>My Weekly Timetable</h4>
+                <p class="text-secondary small mb-0">Your scheduled classes for the current semester</p>
+            </div>
+            <span class="badge bg-primary-subtle text-primary border">
+                <i class="bi bi-calendar3-week me-1"></i>Academic Semester Schedule
+            </span>
+        </div>
+
+        <!-- Weekly Grid -->
+        <div class="sms-card">
+            <div class="sms-card-header">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-calendar3-week-fill text-primary"></i>
+                    <span>Weekly Class Schedule</span>
+                </div>
+            </div>
+            <div class="sms-card-body p-0">
+                <div th:if="${timetableSlots != null and !timetableSlots.isEmpty()}">
+                    <div class="table-responsive">
+                        <table class="table sms-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Day</th>
+                                    <th>Time</th>
+                                    <th>Subject</th>
+                                    <th>Subject Code</th>
+                                    <th>Instructor</th>
+                                    <th>Room / Location</th>
+                                    <th>Duration</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="slot : ${timetableSlots}">
+                                    <td>
+                                        <span class="badge bg-primary-subtle text-primary border fw-semibold"
+                                              th:text="${slot.dayOfWeek}">Monday</span>
+                                    </td>
+                                    <td class="fw-semibold text-primary"
+                                        th:text="${slot.startTime + ' - ' + slot.endTime}">09:00 - 10:00</td>
+                                    <td class="fw-semibold" th:text="${slot.subjectName}">Subject Name</td>
+                                    <td><span class="badge bg-dark border text-secondary" th:text="${slot.subjectCode}">CS501</span></td>
+                                    <td class="text-secondary" th:text="${slot.teacherName}">Instructor Name</td>
+                                    <td><span class="badge bg-dark border text-secondary" th:text="${slot.room != null ? slot.room : 'TBA'}">Room</span></td>
+                                    <td class="text-secondary small" th:text="${slot.durationMinutes + ' min'}">60 min</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Empty state -->
+                <div th:if="${timetableSlots == null or timetableSlots.isEmpty()}" class="text-center py-5 text-secondary">
+                    <i class="bi bi-calendar-x fs-1 opacity-50"></i>
+                    <p class="mt-3 mb-1 fw-semibold">No timetable available</p>
+                    <p class="small">Your class timetable has not been configured yet. Contact your class teacher.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Day-wise summary cards -->
+        <div class="row g-3 mt-2">
+            <div th:each="day : ${ {'MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY'} }" class="col">
+                <div class="sms-card p-3 text-center">
+                    <div class="fw-bold text-primary mb-1 small" th:text="${day}">MON</div>
+                    <div class="text-secondary" style="font-size: 0.75rem;">
+                        <span th:with="count=${timetableSlots != null ? #lists.size(#lists.toList(timetableSlots.?[dayOfWeek == __${day}__])) : 0}"
+                              th:text="${count + ' class(es)'}">0 class(es)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</div>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>
+

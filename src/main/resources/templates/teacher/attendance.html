@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Attendance Management')}"></head>
+<body>
+
+<div th:replace="~{fragments/sidebar :: sidebar(${activePage})}"></div>
+
+<div id="sms-content">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="p-4">
+        <!-- Header -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+            <div>
+                <h3 class="fw-bold text-light mb-1">Session Attendance Register</h3>
+                <p class="text-secondary small mb-0">Record roll call, track present/absent states, and calculate institutional attendance metrics.</p>
+            </div>
+        </div>
+
+        <!-- Feedback Alerts -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show small py-2 px-3 mb-4" role="alert" style="background-color: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.3); color: #6EE7B7;">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <span th:text="${successMessage}">Success</span>
+            <button type="button" class="btn-close btn-close-white small" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show small py-2 px-3 mb-4" role="alert" style="background-color: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); color: #FCA5A5;">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <span th:text="${errorMessage}">Error</span>
+            <button type="button" class="btn-close btn-close-white small" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Session Selection Bar -->
+        <div class="sms-card p-3 mb-4">
+            <form th:action="@{/teacher/attendance}" method="get" class="row g-2 align-items-center">
+                <div class="col-md-4">
+                    <label class="form-label text-secondary small mb-1 fw-semibold">Class Cohort</label>
+                    <select name="classId" class="form-select sms-input" required>
+                        <option value="">Select Assigned Class</option>
+                        <option th:each="c : ${classes}" th:value="${c.id}" th:text="${c.name} + ' (Sec ' + ${c.section} + ')'" th:selected="${c.id == selectedClassId}"></option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label text-secondary small mb-1 fw-semibold">Instructional Subject</label>
+                    <select name="subjectId" class="form-select sms-input" required>
+                        <option value="">Select Subject</option>
+                        <option th:each="s : ${subjects}" th:value="${s.id}" th:text="${s.code} + ' - ' + ${s.name}" th:selected="${s.id == selectedSubjectId}"></option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label text-secondary small mb-1 fw-semibold">Session Date</label>
+                    <input type="date" name="date" class="form-control sms-input" th:value="${sessionDate}" required>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-sms-primary w-100" style="margin-top: 1.8rem;">
+                        <i class="bi bi-journal-text me-1"></i> Open Register
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Attendance Entry Form Roster -->
+        <div th:if="${session != null}" class="sms-card">
+            <div class="sms-card-header">
+                <div>
+                    <span class="fw-bold text-light">Class Roll Call Register</span>
+                    <span class="badge bg-primary-subtle text-primary ms-2" th:text="${sessionDate}">Date</span>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-sm btn-sms-outline" onclick="markAll('PRESENT')">Mark All Present</button>
+                    <button type="button" class="btn btn-sm btn-sms-outline" onclick="markAll('ABSENT')">Mark All Absent</button>
+                </div>
+            </div>
+
+            <form th:action="@{/teacher/attendance/save}" method="post">
+                <input type="hidden" name="sessionId" th:value="${session.id}">
+
+                <div class="sms-card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table sms-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Roll Number</th>
+                                    <th>Student Name</th>
+                                    <th>Status (Select One)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${#lists.isEmpty(enrolledStudents)}">
+                                    <td colspan="3" class="text-center py-4 text-secondary">
+                                        No students enrolled in this class yet.
+                                    </td>
+                                </tr>
+                                <tr th:each="s : ${enrolledStudents}">
+                                    <td class="fw-bold text-primary" th:text="${s.rollNumber}">CSE-2025-001</td>
+                                    <td class="fw-semibold text-light" th:text="${s.fullName}">Student Name</td>
+                                    <td>
+                                        <div class="d-flex gap-3">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input status-radio-present" type="radio" 
+                                                       th:name="'status_' + ${s.id}" 
+                                                       id="'p_' + ${s.id}" 
+                                                       value="PRESENT" 
+                                                       th:checked="${statusMap[s.id] == null or statusMap[s.id].name() == 'PRESENT'}">
+                                                <label class="form-check-label text-success small fw-semibold" th:for="'p_' + ${s.id}">Present</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input status-radio-absent" type="radio" 
+                                                       th:name="'status_' + ${s.id}" 
+                                                       id="'a_' + ${s.id}" 
+                                                       value="ABSENT" 
+                                                       th:checked="${statusMap[s.id] != null and statusMap[s.id].name() == 'ABSENT'}">
+                                                <label class="form-check-label text-danger small fw-semibold" th:for="'a_' + ${s.id}">Absent</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input status-radio-late" type="radio" 
+                                                       th:name="'status_' + ${s.id}" 
+                                                       id="'l_' + ${s.id}" 
+                                                       value="LATE" 
+                                                       th:checked="${statusMap[s.id] != null and statusMap[s.id].name() == 'LATE'}">
+                                                <label class="form-check-label text-warning small fw-semibold" th:for="'l_' + ${s.id}">Late</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input status-radio-excused" type="radio" 
+                                                       th:name="'status_' + ${s.id}" 
+                                                       id="'e_' + ${s.id}" 
+                                                       value="EXCUSED" 
+                                                       th:checked="${statusMap[s.id] != null and statusMap[s.id].name() == 'EXCUSED'}">
+                                                <label class="form-check-label text-primary small fw-semibold" th:for="'e_' + ${s.id}">Excused</label>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="p-3 border-top d-flex justify-content-end gap-2" style="border-color: #334155 !important;">
+                    <button type="submit" class="btn btn-sms-primary px-4">
+                        <i class="bi bi-save2-fill me-1"></i> Save & Calculate Attendance
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div th:unless="${session != null}" class="sms-card p-5 text-center text-secondary">
+            <i class="bi bi-calendar-check fs-1 text-primary mb-2 d-block"></i>
+            <h5>Select a Class Cohort and Subject above to take roll call</h5>
+            <p class="small mb-0">The system automatically calculates individual and class-level percentage standings.</p>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</div>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+
+<script>
+    function markAll(type) {
+        if (type === 'PRESENT') {
+            document.querySelectorAll('.status-radio-present').forEach(el => el.checked = true);
+        } else if (type === 'ABSENT') {
+            document.querySelectorAll('.status-radio-absent').forEach(el => el.checked = true);
+        }
+    }
+</script>
+
+</body>
+</html>
+

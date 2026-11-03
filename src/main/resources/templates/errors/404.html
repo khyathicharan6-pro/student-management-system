@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('404 - Page Not Found')}"></head>
+<body class="bg-dark">
+<div class="login-wrapper">
+    <div class="login-card text-center">
+        <div class="d-inline-flex align-items-center justify-content-center p-3 rounded-circle mb-3" style="background-color: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3);">
+            <i class="bi bi-question-diamond text-warning fs-1"></i>
+        </div>
+        <h2 class="fw-bold text-light mb-1">404</h2>
+        <h5 class="text-warning mb-3">Resource Not Found</h5>
+        <p class="text-secondary small mb-4">
+            The requested page or academic entity does not exist or has been archived.
+        </p>
+        <a th:href="@{/}" class="btn btn-sms-primary">
+            <i class="bi bi-arrow-left me-1"></i> Return to Portal
+        </a>
+    </div>
+</div>
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>
+

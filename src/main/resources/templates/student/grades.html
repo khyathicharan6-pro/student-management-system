@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('My Grades')}"></head>
+<body>
+
+<div th:replace="~{fragments/sidebar :: sidebar(${activePage})}"></div>
+
+<div id="sms-content">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="p-4">
+        <!-- Page Header -->
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h4 class="fw-bold text-light mb-1"><i class="bi bi-mortarboard-fill text-primary me-2"></i>My Grades &amp; GPA</h4>
+                <p class="text-secondary small mb-0">Subject-wise letter grades and cumulative grade point average</p>
+            </div>
+        </div>
+
+        <!-- GPA Summary -->
+        <div class="row g-3 mb-4">
+            <div class="col-sm-6 col-xl-3">
+                <div class="sms-card metric-card">
+                    <div>
+                        <div class="metric-title">Semester GPA</div>
+                        <div class="metric-value text-primary" th:text="${semesterGpa != null ? semesterGpa : 'N/A'}">N/A</div>
+                        <div class="small text-secondary mt-1">Current semester</div>
+                    </div>
+                    <div class="metric-icon-box metric-icon-blue">
+                        <i class="bi bi-mortarboard-fill"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="sms-card metric-card">
+                    <div>
+                        <div class="metric-title">Cumulative GPA</div>
+                        <div class="metric-value text-success" th:text="${cumulativeGpa != null ? cumulativeGpa : 'N/A'}">N/A</div>
+                        <div class="small text-secondary mt-1">All semesters</div>
+                    </div>
+                    <div class="metric-icon-box metric-icon-green">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="sms-card metric-card">
+                    <div>
+                        <div class="metric-title">Subjects Graded</div>
+                        <div class="metric-value" th:text="${gradedSubjects != null ? gradedSubjects : 0}">0</div>
+                        <div class="small text-secondary mt-1">With published grades</div>
+                    </div>
+                    <div class="metric-icon-box metric-icon-yellow">
+                        <i class="bi bi-award-fill"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="sms-card metric-card">
+                    <div>
+                        <div class="metric-title">Honours Standing</div>
+                        <div class="metric-value text-warning" th:text="${honourStanding != null ? honourStanding : 'N/A'}">N/A</div>
+                        <div class="small text-secondary mt-1">Academic rank</div>
+                    </div>
+                    <div class="metric-icon-box metric-icon-yellow">
+                        <i class="bi bi-trophy-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grade Table -->
+        <div class="sms-card">
+            <div class="sms-card-header">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-table text-primary"></i>
+                    <span>Subject-wise Grade Report</span>
+                </div>
+            </div>
+            <div class="sms-card-body p-0">
+                <div th:if="${grades != null and !grades.isEmpty()}">
+                    <div class="table-responsive">
+                        <table class="table sms-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Code</th>
+                                    <th>Credits</th>
+                                    <th>Marks Obtained</th>
+                                    <th>Percentage</th>
+                                    <th>Letter Grade</th>
+                                    <th>Grade Points</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="g : ${grades}">
+                                    <td class="fw-semibold" th:text="${g.subjectName}">Subject Name</td>
+                                    <td><span class="badge bg-dark border text-secondary" th:text="${g.subjectCode}">CS501</span></td>
+                                    <td class="text-secondary" th:text="${g.credits}">3</td>
+                                    <td class="fw-bold" th:text="${g.marksObtained + ' / ' + g.maxMarks}">0/0</td>
+                                    <td th:text="${g.percentage + '%'}">0%</td>
+                                    <td>
+                                        <span class="badge fs-6 px-3 py-1"
+                                              th:classappend="${g.letterGrade == 'A+' or g.letterGrade == 'A' ? 'bg-success text-white' : (g.letterGrade == 'B+' or g.letterGrade == 'B' ? 'bg-primary text-white' : (g.letterGrade == 'F' ? 'bg-danger text-white' : 'bg-warning text-dark'))}"
+                                              th:text="${g.letterGrade}">A</span>
+                                    </td>
+                                    <td class="fw-semibold text-primary" th:text="${g.gradePoints}">0.0</td>
+                                    <td>
+                                        <span class="badge bg-success-subtle text-success border small"
+                                              th:classappend="${g.letterGrade == 'F' ? 'bg-danger-subtle text-danger border' : ''}"
+                                              th:text="${g.letterGrade == 'F' ? 'Fail' : 'Pass'}">Pass</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div th:if="${grades == null or grades.isEmpty()}" class="text-center py-5 text-secondary">
+                    <i class="bi bi-mortarboard fs-1 opacity-50"></i>
+                    <p class="mt-3 mb-1 fw-semibold">No grades published yet</p>
+                    <p class="small">Grades will appear here once your teacher publishes examination results.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grade Scale Reference -->
+        <div class="sms-card mt-4">
+            <div class="sms-card-header">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-info-circle-fill text-primary"></i>
+                    <span>Grade Scale Reference</span>
+                </div>
+            </div>
+            <div class="sms-card-body">
+                <div class="row g-3">
+                    <div th:if="${gradeScales != null and !gradeScales.isEmpty()}" class="col-12">
+                        <div class="d-flex flex-wrap gap-2">
+                            <div th:each="gs : ${gradeScales}" class="p-2 px-3 rounded text-center"
+                                 style="background: #111827; border: 1px solid #334155; min-width: 90px;">
+                                <div class="fw-bold text-primary fs-5" th:text="${gs.letterGrade}">A+</div>
+                                <div class="text-secondary" style="font-size: 0.7rem;" th:text="${gs.minPercentage + '% - ' + gs.maxPercentage + '%'}">90-100%</div>
+                                <div class="text-light small" th:text="${gs.gradePoints + ' GP'}">10.0 GP</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${gradeScales == null or gradeScales.isEmpty()}" class="col-12">
+                        <p class="text-secondary small mb-0">Grade scale not configured by administration yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</div>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>
+

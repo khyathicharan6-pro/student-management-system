@@ -1,0 +1,385 @@
+/* ==========================================================================
+   SMS Dark Enterprise Academic Design System
+   Palette:
+   Background: #0B1020 | Sidebar: #111827 | Cards: #1E293B | Border: #334155
+   Primary: #3B82F6 | Success: #10B981 | Warning: #F59E0B | Danger: #EF4444
+   Text Primary: #F8FAFC | Text Secondary: #94A3B8
+   ========================================================================== */
+
+:root {
+    --sms-bg: #0B1020;
+    --sms-sidebar: #111827;
+    --sms-card: #1E293B;
+    --sms-card-hover: #26354A;
+    --sms-primary: #3B82F6;
+    --sms-primary-rgb: 59, 130, 246;
+    --sms-success: #10B981;
+    --sms-warning: #F59E0B;
+    --sms-danger: #EF4444;
+    --sms-text-primary: #F8FAFC;
+    --sms-text-secondary: #94A3B8;
+    --sms-border: #334155;
+    --sms-radius-lg: 12px;
+    --sms-radius-md: 8px;
+    --sms-radius-sm: 6px;
+    --sms-sidebar-width: 260px;
+}
+
+body {
+    background-color: var(--sms-bg);
+    color: var(--sms-text-primary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: var(--sms-bg);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--sms-border);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+}
+
+/* Sidebar Styling */
+#sms-sidebar {
+    width: var(--sms-sidebar-width);
+    background-color: var(--sms-sidebar);
+    border-right: 1px solid var(--sms-border);
+    min-height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1020;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-brand {
+    height: 68px;
+    display: flex;
+    align-items: center;
+    padding: 0 1.25rem;
+    border-bottom: 1px solid var(--sms-border);
+    color: var(--sms-text-primary);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.15rem;
+}
+
+.sidebar-nav {
+    flex: 1;
+    padding: 1rem 0.75rem;
+    overflow-y: auto;
+}
+
+.nav-section-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #64748B;
+    padding: 0.75rem 0.75rem 0.35rem;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.65rem 0.85rem;
+    color: var(--sms-text-secondary);
+    text-decoration: none;
+    border-radius: var(--sms-radius-md);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    margin-bottom: 0.2rem;
+}
+
+.sidebar-link:hover {
+    color: var(--sms-text-primary);
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-link.active {
+    color: #60A5FA;
+    background-color: rgba(59, 130, 246, 0.15);
+    border-left: 3px solid var(--sms-primary);
+    font-weight: 600;
+}
+
+.sidebar-link i {
+    font-size: 1.15rem;
+}
+
+/* Main Layout Wrapper */
+#sms-content {
+    margin-left: var(--sms-sidebar-width);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: margin-left 0.3s ease;
+}
+
+/* Navbar */
+.sms-navbar {
+    height: 68px;
+    background-color: var(--sms-sidebar);
+    border-bottom: 1px solid var(--sms-border);
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 1010;
+}
+
+/* Dashboard Cards */
+.sms-card {
+    background-color: var(--sms-card);
+    border: 1px solid var(--sms-border);
+    border-radius: var(--sms-radius-lg);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.sms-card:hover {
+    border-color: #475569;
+}
+
+.sms-card-header {
+    padding: 1.1rem 1.25rem;
+    border-bottom: 1px solid var(--sms-border);
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sms-card-body {
+    padding: 1.25rem;
+}
+
+/* Metric Display Cards */
+.metric-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem;
+}
+
+.metric-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--sms-text-secondary);
+    margin-bottom: 0.35rem;
+}
+
+.metric-value {
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: var(--sms-text-primary);
+    line-height: 1.2;
+}
+
+.metric-icon-box {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--sms-radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.metric-icon-blue {
+    background-color: rgba(59, 130, 246, 0.15);
+    color: var(--sms-primary);
+}
+
+.metric-icon-green {
+    background-color: rgba(16, 185, 129, 0.15);
+    color: var(--sms-success);
+}
+
+.metric-icon-yellow {
+    background-color: rgba(245, 158, 11, 0.15);
+    color: var(--sms-warning);
+}
+
+.metric-icon-red {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: var(--sms-danger);
+}
+
+/* Tables */
+.sms-table {
+    color: var(--sms-text-primary);
+    margin-bottom: 0;
+}
+
+.sms-table thead th {
+    background-color: var(--sms-sidebar);
+    color: var(--sms-text-secondary);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--sms-border);
+    padding: 0.85rem 1rem;
+}
+
+.sms-table tbody td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--sms-border);
+    font-size: 0.88rem;
+    vertical-align: middle;
+    background-color: transparent;
+    color: var(--sms-text-primary);
+}
+
+.sms-table tbody tr:hover td {
+    background-color: var(--sms-card-hover);
+}
+
+/* Badges */
+.badge-present {
+    background-color: rgba(16, 185, 129, 0.15);
+    color: #34D399;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    padding: 0.35rem 0.65rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.badge-absent {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #F87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 0.35rem 0.65rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.badge-late {
+    background-color: rgba(245, 158, 11, 0.15);
+    color: #FBBF24;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    padding: 0.35rem 0.65rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.badge-role {
+    background-color: rgba(59, 130, 246, 0.15);
+    color: #93C5FD;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Buttons */
+.btn-sms-primary {
+    background-color: var(--sms-primary);
+    border-color: var(--sms-primary);
+    color: #ffffff;
+    font-weight: 600;
+    border-radius: var(--sms-radius-md);
+    padding: 0.55rem 1.15rem;
+    transition: all 0.2s ease;
+}
+
+.btn-sms-primary:hover {
+    background-color: #2563EB;
+    border-color: #2563EB;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+}
+
+.btn-sms-outline {
+    background-color: transparent;
+    border: 1px solid var(--sms-border);
+    color: var(--sms-text-primary);
+    border-radius: var(--sms-radius-md);
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease;
+}
+
+.btn-sms-outline:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: #64748B;
+    color: #ffffff;
+}
+
+/* Form Controls */
+.sms-input {
+    background-color: var(--sms-bg);
+    border: 1px solid var(--sms-border);
+    color: var(--sms-text-primary);
+    border-radius: var(--sms-radius-md);
+    padding: 0.65rem 0.95rem;
+}
+
+.sms-input:focus {
+    background-color: var(--sms-bg);
+    border-color: var(--sms-primary);
+    color: var(--sms-text-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+}
+
+.sms-input::placeholder {
+    color: #64748B;
+}
+
+/* Login Page Styling */
+.login-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at top, #1E293B 0%, #0B1020 70%);
+    padding: 1.5rem;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 440px;
+    background-color: var(--sms-card);
+    border: 1px solid var(--sms-border);
+    border-radius: var(--sms-radius-lg);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    padding: 2.25rem;
+}
+
+/* Responsive Behavior */
+@media (max-width: 991.98px) {
+    #sms-sidebar {
+        margin-left: calc(-1 * var(--sms-sidebar-width));
+    }
+    #sms-sidebar.show {
+        margin-left: 0;
+    }
+    #sms-content {
+        margin-left: 0;
+    }
+}
+

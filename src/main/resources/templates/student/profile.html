@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('My Profile')}"></head>
+<body>
+
+<div th:replace="~{fragments/sidebar :: sidebar(${activePage})}"></div>
+
+<div id="sms-content">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="p-4">
+        <!-- Page Header -->
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h4 class="fw-bold text-light mb-1"><i class="bi bi-person-lines-fill text-primary me-2"></i>My Academic Profile</h4>
+                <p class="text-secondary small mb-0">Your personal and academic information (read-only)</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Profile Card -->
+            <div class="col-lg-4">
+                <div class="sms-card text-center p-4">
+                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3 shadow"
+                         style="width: 90px; height: 90px; font-size: 2.5rem; font-weight: 800;">
+                        <span th:text="${student != null and student.fullName != null ? student.fullName.substring(0,1) : 'S'}">S</span>
+                    </div>
+                    <h5 class="fw-bold text-light mb-1" th:text="${student != null ? student.fullName : 'Student Name'}">Student Name</h5>
+                    <p class="text-secondary small mb-2" th:text="${student != null ? student.rollNumber : 'N/A'}">Roll Number</p>
+                    <span class="badge bg-success-subtle text-success border mb-3" th:text="${student != null ? student.accountStatus : 'Active'}">Active</span>
+                    <hr style="border-color: #334155;">
+                    <div class="text-start">
+                        <div class="d-flex justify-content-between py-2 border-bottom" style="border-color: #334155 !important;">
+                            <span class="text-secondary small">Department</span>
+                            <span class="text-light small fw-semibold" th:text="${student != null ? student.department : 'N/A'}">CSE</span>
+                        </div>
+                        <div class="d-flex justify-content-between py-2 border-bottom" style="border-color: #334155 !important;">
+                            <span class="text-secondary small">Course</span>
+                            <span class="text-light small fw-semibold" th:text="${student != null ? student.course : 'N/A'}">B.Tech</span>
+                        </div>
+                        <div class="d-flex justify-content-between py-2 border-bottom" style="border-color: #334155 !important;">
+                            <span class="text-secondary small">Academic Year</span>
+                            <span class="text-light small fw-semibold" th:text="${student != null ? student.academicYear : 'N/A'}">2025-2026</span>
+                        </div>
+                        <div class="d-flex justify-content-between py-2">
+                            <span class="text-secondary small">Semester</span>
+                            <span class="text-light small fw-semibold" th:text="${student != null ? student.semester : 'N/A'}">5th</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Info -->
+            <div class="col-lg-8">
+                <div class="sms-card">
+                    <div class="sms-card-header">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-info-circle-fill text-primary"></i>
+                            <span>Personal Information</span>
+                        </div>
+                        <span class="badge bg-dark border text-secondary small"><i class="bi bi-lock-fill me-1"></i>Read-only</span>
+                    </div>
+                    <div class="sms-card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary small">Full Name</label>
+                                <div class="form-control sms-form-control" style="background: #111827; cursor: default;"
+                                     th:text="${student != null ? student.fullName : 'N/A'}">Student Full Name</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary small">Registration Number</label>
+                                <div class="form-control sms-form-control" style="background: #111827; cursor: default;"
+                                     th:text="${student != null ? student.registrationNumber : 'N/A'}">REG-2025-001</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary small">College Roll Number</label>
+                                <div class="form-control sms-form-control" style="background: #111827; cursor: default;"
+                                     th:text="${student != null ? student.rollNumber : 'N/A'}">CSE-2025-042</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary small">Email Address</label>
+                                <div class="form-control sms-form-control" style="background: #111827; cursor: default;"
+                                     th:text="${student != null and student.user != null ? student.user.email : 'N/A'}">student@college.edu</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary small">Phone Number</label>
+                                <div class="form-control sms-form-control" style="background: #111827; cursor: default;"
+                                     th:text="${student != null ? student.phone : 'N/A'}">+91 99999 00000</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary small">Class & Section</label>
+                                <div class="form-control sms-form-control" style="background: #111827; cursor: default;"
+                                     th:text="${student != null ? (student.className + ' - ' + student.section) : 'N/A'}">CSE-5A</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary small">Department</label>
+                                <div class="form-control sms-form-control" style="background: #111827; cursor: default;"
+                                     th:text="${student != null ? student.department : 'N/A'}">Computer Science &amp; Engineering</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary small">Course</label>
+                                <div class="form-control sms-form-control" style="background: #111827; cursor: default;"
+                                     th:text="${student != null ? student.course : 'N/A'}">B.Tech</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Info -->
+                <div class="sms-card mt-4">
+                    <div class="sms-card-header">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-shield-lock-fill text-warning"></i>
+                            <span>Account Information</span>
+                        </div>
+                    </div>
+                    <div class="sms-card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary small">Username / Login ID</label>
+                                <div class="form-control sms-form-control" style="background: #111827; cursor: default;"
+                                     th:text="${student != null and student.user != null ? student.user.username : 'N/A'}">student</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary small">Account Status</label>
+                                <div class="form-control sms-form-control" style="background: #111827; cursor: default;"
+                                     th:text="${student != null ? student.accountStatus : 'Active'}">Active</div>
+                            </div>
+                        </div>
+                        <div class="mt-3 p-3 rounded" style="background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.2);">
+                            <p class="text-secondary small mb-0">
+                                <i class="bi bi-info-circle me-1 text-primary"></i>
+                                To update your profile information or change your password, contact your class teacher or the academic administration office.
+                                Use <a th:href="@{/student/settings}" class="text-primary">Account Settings</a> to change your password.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</div>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>
+

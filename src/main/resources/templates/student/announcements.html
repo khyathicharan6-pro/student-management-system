@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Announcements')}"></head>
+<body>
+
+<div th:replace="~{fragments/sidebar :: sidebar(${activePage})}"></div>
+
+<div id="sms-content">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="p-4">
+        <!-- Page Header -->
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h4 class="fw-bold text-light mb-1"><i class="bi bi-bell-fill text-warning me-2"></i>College Announcements</h4>
+                <p class="text-secondary small mb-0">Official notices, examination alerts and college-wide communications</p>
+            </div>
+            <span class="badge bg-warning-subtle text-warning border" th:text="${announcements != null ? announcements.size() + ' Active' : '0 Active'}">0 Active</span>
+        </div>
+
+        <!-- Announcements List -->
+        <div th:if="${announcements != null and !announcements.isEmpty()}">
+            <div th:each="ann, iterStat : ${announcements}" class="sms-card mb-3">
+                <div class="sms-card-body">
+                    <div class="d-flex gap-3">
+                        <!-- Date Box -->
+                        <div class="rounded p-2 text-center flex-shrink-0"
+                             style="background-color: #111827; min-width: 58px; height: 58px;">
+                            <span class="d-block fw-bold text-primary" style="font-size: 1.1rem;"
+                                  th:text="${#temporals.format(ann.publishedAt, 'dd')}">01</span>
+                            <span class="d-block text-secondary" style="font-size: 0.65rem; text-transform: uppercase;"
+                                  th:text="${#temporals.format(ann.publishedAt, 'MMM')}">NOV</span>
+                        </div>
+                        <!-- Content -->
+                        <div class="flex-grow-1">
+                            <div class="d-flex align-items-start justify-content-between gap-2 flex-wrap">
+                                <h6 class="fw-bold text-light mb-1" th:text="${ann.title}">Announcement Title</h6>
+                                <div class="d-flex gap-1 flex-shrink-0">
+                                    <span class="badge bg-dark border text-secondary small"
+                                          th:text="${ann.category != null ? ann.category : 'General'}">General</span>
+                                    <span class="badge bg-warning-subtle text-warning border small" th:if="${iterStat.index < 2}">New</span>
+                                </div>
+                            </div>
+                            <p class="text-secondary small mb-2" th:text="${ann.content}">Announcement content goes here...</p>
+                            <div class="d-flex align-items-center gap-3 text-secondary" style="font-size: 0.75rem;">
+                                <span><i class="bi bi-person me-1"></i><span th:text="${ann.authorName != null ? ann.authorName : 'Academic Affairs'}">Author</span></span>
+                                <span><i class="bi bi-clock me-1"></i><span th:text="${#temporals.format(ann.publishedAt, 'dd MMM yyyy, HH:mm')}">Date</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty state -->
+        <div th:if="${announcements == null or announcements.isEmpty()}" class="sms-card">
+            <div class="text-center py-5 text-secondary">
+                <i class="bi bi-megaphone fs-1 opacity-50"></i>
+                <p class="mt-3 mb-1 fw-semibold">No announcements yet</p>
+                <p class="small">There are no active announcements at this time. Check back later.</p>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</div>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>
+

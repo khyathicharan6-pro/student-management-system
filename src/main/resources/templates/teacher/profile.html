@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Faculty Profile & Settings')}"></head>
+<body>
+
+<div th:replace="~{fragments/sidebar :: sidebar(${activePage})}"></div>
+
+<div id="sms-content">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="p-4">
+        <div class="mb-4">
+            <h3 class="fw-bold text-light mb-1">Faculty Profile & Account Settings</h3>
+            <p class="text-secondary small mb-0">View institutional appointments and manage account security.</p>
+        </div>
+
+        <!-- Feedback Alerts -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show small py-2 px-3 mb-4" role="alert" style="background-color: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.3); color: #6EE7B7;">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <span th:text="${successMessage}">Success</span>
+            <button type="button" class="btn-close btn-close-white small" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show small py-2 px-3 mb-4" role="alert" style="background-color: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); color: #FCA5A5;">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <span th:text="${errorMessage}">Error</span>
+            <button type="button" class="btn-close btn-close-white small" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div class="row g-4">
+            <!-- Faculty Details Card -->
+            <div class="col-lg-7">
+                <div class="sms-card p-4">
+                    <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom" style="border-color: #334155 !important;">
+                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center shadow" style="width: 68px; height: 68px; font-size: 1.85rem; font-weight: 800;">
+                            <i class="bi bi-person-workspace"></i>
+                        </div>
+                        <div>
+                            <h4 class="fw-bold text-light mb-1" th:text="${profile != null ? profile.fullName : userDetails.displayName}">Faculty Name</h4>
+                            <div class="text-secondary small" th:text="${profile != null ? profile.designation : 'Faculty Member'}">Designation</div>
+                            <span class="badge bg-primary-subtle text-primary border small mt-1">Authorized Faculty</span>
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <span class="text-secondary small d-block">Employee ID</span>
+                            <span class="fw-bold text-light" th:text="${profile != null ? profile.employeeId : 'EMP-1001'}">EMP-1001</span>
+                        </div>
+                        <div class="col-sm-6">
+                            <span class="text-secondary small d-block">Department</span>
+                            <span class="fw-bold text-light" th:text="${department != null ? department.name : 'Computer Science'}">Computer Science</span>
+                        </div>
+                        <div class="col-sm-6">
+                            <span class="text-secondary small d-block">Institutional Email</span>
+                            <span class="fw-bold text-light" th:text="${userDetails.email}">email@college.edu</span>
+                        </div>
+                        <div class="col-sm-6">
+                            <span class="text-secondary small d-block">Academic Qualification</span>
+                            <span class="fw-bold text-light" th:text="${profile != null ? profile.qualification : 'Ph.D.'}">Ph.D.</span>
+                        </div>
+                        <div class="col-sm-6">
+                            <span class="text-secondary small d-block">Contact Phone</span>
+                            <span class="fw-bold text-light" th:text="${profile != null and profile.phoneNumber != null ? profile.phoneNumber : 'Not registered'}">Phone</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Password Change Card -->
+            <div class="col-lg-5">
+                <div class="sms-card p-4">
+                    <h5 class="fw-bold text-light mb-3">
+                        <i class="bi bi-shield-lock text-primary me-2"></i> Change Password
+                    </h5>
+                    <form th:action="@{/teacher/profile/change-password}" method="post" th:object="${passwordDto}">
+                        <div class="mb-3">
+                            <label class="form-label text-secondary small fw-semibold">Current Password *</label>
+                            <input type="password" class="form-control sms-input" th:field="*{currentPassword}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-secondary small fw-semibold">New Password *</label>
+                            <input type="password" class="form-control sms-input" th:field="*{newPassword}" required minlength="6">
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label text-secondary small fw-semibold">Confirm New Password *</label>
+                            <input type="password" class="form-control sms-input" th:field="*{confirmPassword}" required minlength="6">
+                        </div>
+                        <button type="submit" class="btn btn-sms-primary w-100">
+                            Update Credentials
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</div>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>
+

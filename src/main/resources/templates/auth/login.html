@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Secure Portal Sign In')}"></head>
+<body class="bg-dark">
+<div class="login-wrapper">
+    <div class="login-card">
+        <!-- Brand Header -->
+        <div class="text-center mb-4">
+            <div class="d-inline-flex align-items-center justify-content-center p-3 rounded-circle mb-3" style="background-color: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3);">
+                <i class="bi bi-mortarboard-fill text-primary fs-2"></i>
+            </div>
+            <h4 class="fw-bold text-light mb-1">Student Management System</h4>
+            <p class="text-secondary small mb-0">Springfield Institute of Technology</p>
+        </div>
+
+        <!-- Feedback Alerts -->
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show small py-2 px-3 mb-4" role="alert" style="background-color: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); color: #FCA5A5;">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <span th:text="${errorMessage}">Authentication failed.</span>
+            <button type="button" class="btn-close btn-close-white small" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show small py-2 px-3 mb-4" role="alert" style="background-color: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.3); color: #6EE7B7;">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <span th:text="${successMessage}">Logged out successfully.</span>
+            <button type="button" class="btn-close btn-close-white small" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Login Form -->
+        <form th:action="@{/login}" method="post">
+            <div class="mb-3">
+                <label for="username" class="form-label text-secondary small fw-semibold">Username or Institutional Email</label>
+                <div class="input-group">
+                    <span class="input-group-text border-end-0" style="background-color: #0B1020; border-color: #334155; color: #64748B;">
+                        <i class="bi bi-person-fill"></i>
+                    </span>
+                    <input type="text" class="form-control sms-input border-start-0 ps-0" id="username" name="username" placeholder="teacher or student" required autofocus>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <label for="password" class="form-label text-secondary small fw-semibold mb-0">Password</label>
+                </div>
+                <div class="input-group">
+                    <span class="input-group-text border-end-0" style="background-color: #0B1020; border-color: #334155; color: #64748B;">
+                        <i class="bi bi-lock-fill"></i>
+                    </span>
+                    <input type="password" class="form-control sms-input border-start-0 ps-0" id="password" name="password" placeholder="••••••••••••" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-sms-primary w-100 py-2 d-flex align-items-center justify-content-center gap-2 mb-3">
+                <i class="bi bi-box-arrow-in-right"></i> Sign In to Portal
+            </button>
+        </form>
+
+        <!-- Quick Demo Switcher -->
+        <div class="p-3 rounded mt-4" style="background-color: #0B1020; border: 1px dashed #334155;">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+                <span class="text-secondary small fw-semibold">
+                    <i class="bi bi-lightning-charge-fill text-warning me-1"></i> Quick Test Accounts:
+                </span>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-sm btn-sms-outline flex-fill text-start py-1 px-2" onclick="fillCredentials('teacher', 'password123')">
+                    <span class="badge bg-primary text-white me-1">Teacher</span>
+                    <span class="small text-secondary">teacher</span>
+                </button>
+                <button type="button" class="btn btn-sm btn-sms-outline flex-fill text-start py-1 px-2" onclick="fillCredentials('student', 'password123')">
+                    <span class="badge bg-success text-white me-1">Student</span>
+                    <span class="small text-secondary">student</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <span class="text-secondary" style="font-size: 0.78rem;">
+                <i class="bi bi-shield-check text-primary me-1"></i>
+                End-to-End Role-Enforced Security
+            </span>
+        </div>
+    </div>
+</div>
+
+<script>
+    function fillCredentials(user, pass) {
+        document.getElementById('username').value = user;
+        document.getElementById('password').value = pass;
+    }
+</script>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>
+

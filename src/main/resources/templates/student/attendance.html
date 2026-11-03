@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('My Attendance')}"></head>
+<body>
+
+<div th:replace="~{fragments/sidebar :: sidebar(${activePage})}"></div>
+
+<div id="sms-content">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="p-4">
+        <!-- Page Header -->
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h4 class="fw-bold text-light mb-1"><i class="bi bi-calendar-check-fill text-primary me-2"></i>My Attendance Record</h4>
+                <p class="text-secondary small mb-0">Subject-wise and overall attendance summary</p>
+            </div>
+        </div>
+
+        <!-- Overall Attendance Summary -->
+        <div class="row g-3 mb-4">
+            <div class="col-sm-6 col-xl-3">
+                <div class="sms-card metric-card">
+                    <div>
+                        <div class="metric-title">Overall Attendance</div>
+                        <div class="metric-value text-success" th:text="${overallAttendance != null ? overallAttendance : '0%'}">0%</div>
+                        <div class="small text-secondary mt-1">Across all subjects</div>
+                    </div>
+                    <div class="metric-icon-box metric-icon-green">
+                        <i class="bi bi-calendar-check-fill"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="sms-card metric-card">
+                    <div>
+                        <div class="metric-title">Classes Attended</div>
+                        <div class="metric-value" th:text="${classesAttended != null ? classesAttended : 0}">0</div>
+                        <div class="small text-secondary mt-1">Total present count</div>
+                    </div>
+                    <div class="metric-icon-box metric-icon-blue">
+                        <i class="bi bi-check2-circle"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="sms-card metric-card">
+                    <div>
+                        <div class="metric-title">Classes Absent</div>
+                        <div class="metric-value text-danger" th:text="${classesAbsent != null ? classesAbsent : 0}">0</div>
+                        <div class="small text-secondary mt-1">Missed sessions</div>
+                    </div>
+                    <div class="metric-icon-box metric-icon-red">
+                        <i class="bi bi-x-circle"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="sms-card metric-card">
+                    <div>
+                        <div class="metric-title">Eligibility Status</div>
+                        <div class="metric-value text-success">Eligible</div>
+                        <div class="small text-secondary mt-1">Min. 75% required</div>
+                    </div>
+                    <div class="metric-icon-box metric-icon-yellow">
+                        <i class="bi bi-patch-check-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Attendance Chart -->
+            <div class="col-lg-5">
+                <div class="sms-card h-100">
+                    <div class="sms-card-header">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-pie-chart-fill text-primary"></i>
+                            <span>Attendance Breakdown</span>
+                        </div>
+                    </div>
+                    <div class="sms-card-body d-flex align-items-center justify-content-center" style="min-height: 280px;">
+                        <canvas id="attendanceChart" width="260" height="260"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subject-wise Attendance -->
+            <div class="col-lg-7">
+                <div class="sms-card h-100">
+                    <div class="sms-card-header">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-book-fill text-primary"></i>
+                            <span>Subject-wise Attendance</span>
+                        </div>
+                    </div>
+                    <div class="sms-card-body p-0">
+                        <!-- If attendance data exists -->
+                        <div th:if="${subjectAttendance != null and !subjectAttendance.isEmpty()}">
+                            <div th:each="sa : ${subjectAttendance}" class="p-3 border-bottom d-flex align-items-center justify-content-between gap-3"
+                                 style="border-color: #334155 !important;">
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold text-light small" th:text="${sa.subjectName}">Subject Name</div>
+                                    <div class="text-secondary" style="font-size: 0.75rem;"
+                                         th:text="'Present: ' + sa.present + '  |  Absent: ' + sa.absent + '  |  Total: ' + sa.total">Present: 0 | Absent: 0 | Total: 0</div>
+                                    <div class="mt-2">
+                                        <div class="progress" style="height: 5px; background: #1E293B;">
+                                            <div class="progress-bar" role="progressbar"
+                                                 th:classappend="${sa.percentage >= 75 ? 'bg-success' : 'bg-danger'}"
+                                                 th:style="'width: ' + sa.percentage + '%'"
+                                                 th:attr="aria-valuenow=${sa.percentage}"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-end" style="min-width: 60px;">
+                                    <span class="badge fs-6 px-3 py-2"
+                                          th:classappend="${sa.percentage >= 75 ? 'bg-success-subtle text-success border' : 'bg-danger-subtle text-danger border'}"
+                                          th:text="${sa.percentage + '%'}">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Empty state -->
+                        <div th:if="${subjectAttendance == null or subjectAttendance.isEmpty()}"
+                             class="text-center py-5 text-secondary">
+                            <i class="bi bi-calendar-x fs-1 opacity-50"></i>
+                            <p class="mt-3 mb-0">No attendance records found for this semester.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</div>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const ctx = document.getElementById('attendanceChart');
+    if (ctx) {
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Present', 'Absent', 'Late'],
+                datasets: [{
+                    data: [
+                        /*[[${classesAttended != null ? classesAttended : 0}]]*/ 0,
+                        /*[[${classesAbsent != null ? classesAbsent : 0}]]*/ 0,
+                        2
+                    ],
+                    backgroundColor: ['#10B981', '#EF4444', '#F59E0B'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                plugins: { legend: { labels: { color: '#94A3B8' } } },
+                cutout: '70%',
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    }
+});
+</script>
+</body>
+</html>
+

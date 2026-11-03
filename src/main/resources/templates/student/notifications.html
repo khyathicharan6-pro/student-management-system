@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Notifications')}"></head>
+<body>
+
+<div th:replace="~{fragments/sidebar :: sidebar(${activePage})}"></div>
+
+<div id="sms-content">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="p-4">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h4 class="fw-bold text-light mb-1"><i class="bi bi-inbox-fill text-primary me-2"></i>My Notifications</h4>
+                <p class="text-secondary small mb-0">System alerts, grade releases and teacher messages</p>
+            </div>
+            <span class="badge bg-primary-subtle text-primary border"
+                  th:text="${notifications != null ? notifications.size() + ' Total' : '0 Total'}">0 Total</span>
+        </div>
+
+        <div class="sms-card">
+            <div class="sms-card-header">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-bell-fill text-primary"></i>
+                    <span>Notification Inbox</span>
+                </div>
+            </div>
+            <div class="sms-card-body p-0">
+                <div th:if="${notifications != null and !notifications.isEmpty()}">
+                    <div th:each="notif : ${notifications}"
+                         class="d-flex align-items-start gap-3 p-3 border-bottom"
+                         style="border-color: #334155 !important;"
+                         th:classappend="${!notif.read} ? 'bg-opacity-10' : ''">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                             style="width:40px;height:40px;background:#1E293B;border:1px solid #334155;">
+                            <i class="bi bi-bell-fill text-primary"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start gap-2">
+                                <p class="fw-semibold text-light mb-1" th:text="${notif.message}">Notification message</p>
+                                <span class="badge bg-primary-subtle text-primary border small flex-shrink-0"
+                                      th:if="${!notif.read}">New</span>
+                            </div>
+                            <div class="text-secondary" style="font-size:0.75rem;"
+                                 th:text="${#temporals.format(notif.createdAt, 'dd MMM yyyy, HH:mm')}">Date</div>
+                        </div>
+                    </div>
+                </div>
+                <div th:if="${notifications == null or notifications.isEmpty()}" class="text-center py-5 text-secondary">
+                    <i class="bi bi-inbox fs-1 opacity-50"></i>
+                    <p class="mt-3 mb-1 fw-semibold">No notifications</p>
+                    <p class="small">You're all caught up! No new notifications at this time.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</div>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>
+

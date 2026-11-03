@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Subject Catalogue')}"></head>
+<body>
+
+<div th:replace="~{fragments/sidebar :: sidebar(${activePage})}"></div>
+
+<div id="sms-content">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="p-4">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+            <div>
+                <h3 class="fw-bold text-light mb-1">Institutional Subject Management</h3>
+                <p class="text-secondary small mb-0">Manage course curriculum subjects, credit points, and class-faculty allocations.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-sms-outline d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#assignSubjectModal">
+                    <i class="bi bi-link-45deg"></i> Allocate to Class
+                </button>
+                <button type="button" class="btn btn-sms-primary d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#addSubjectModal">
+                    <i class="bi bi-journal-plus"></i> Add New Subject
+                </button>
+            </div>
+        </div>
+
+        <!-- Feedback Alerts -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show small py-2 px-3 mb-4" role="alert" style="background-color: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.3); color: #6EE7B7;">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <span th:text="${successMessage}">Success</span>
+            <button type="button" class="btn-close btn-close-white small" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show small py-2 px-3 mb-4" role="alert" style="background-color: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); color: #FCA5A5;">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <span th:text="${errorMessage}">Error</span>
+            <button type="button" class="btn-close btn-close-white small" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Subjects List Card -->
+        <div class="sms-card">
+            <div class="sms-card-header">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-journal-bookmark-fill text-primary"></i>
+                    <span>Departmental Curriculum Subjects</span>
+                </div>
+                <span class="badge bg-primary-subtle text-primary border small" th:text="${subjects.size()} + ' Subjects'">0</span>
+            </div>
+            <div class="sms-card-body p-0">
+                <div class="table-responsive">
+                    <table class="table sms-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Subject Code</th>
+                                <th>Subject Name</th>
+                                <th>Credits</th>
+                                <th>Course Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${#lists.isEmpty(subjects)}">
+                                <td colspan="4" class="text-center py-4 text-secondary">
+                                    No subjects created yet.
+                                </td>
+                            </tr>
+                            <tr th:each="s : ${subjects}">
+                                <td class="fw-bold text-primary" th:text="${s.code}">CS501</td>
+                                <td class="fw-semibold text-light" th:text="${s.name}">Database Systems</td>
+                                <td>
+                                    <span class="badge bg-dark border text-light" th:text="${s.credits} + ' Credits'">3.0 Credits</span>
+                                </td>
+                                <td>
+                                    <span th:if="${s.elective}" class="badge bg-warning-subtle text-warning border small">Elective</span>
+                                    <span th:unless="${s.elective}" class="badge bg-primary-subtle text-primary border small">Core Required</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</div>
+
+<!-- Add Subject Modal -->
+<div class="modal fade" id="addSubjectModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background-color: #1E293B; border: 1px solid #334155; color: #F8FAFC;">
+            <div class="modal-header" style="border-bottom: 1px solid #334155;">
+                <h5 class="modal-title fw-bold">
+                    <i class="bi bi-journal-plus text-primary me-2"></i> Add New Subject
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form th:action="@{/teacher/subjects/add}" method="post" th:object="${newSubject}">
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small fw-semibold">Subject Code *</label>
+                        <input type="text" class="form-control sms-input" th:field="*{code}" placeholder="e.g. CS505" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small fw-semibold">Subject Name *</label>
+                        <input type="text" class="form-control sms-input" th:field="*{name}" placeholder="e.g. Cloud Computing & Microservices" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small fw-semibold">Department *</label>
+                        <select class="form-select sms-input" th:field="*{departmentId}" required>
+                            <option th:each="d : ${departments}" th:value="${d.id}" th:text="${d.name}"></option>
+                        </select>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <label class="form-label text-secondary small fw-semibold">Credits *</label>
+                            <input type="number" step="0.5" class="form-control sms-input" th:field="*{credits}" value="3.0" required>
+                        </div>
+                        <div class="col-6 d-flex align-items-end mb-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" th:field="*{elective}" id="electiveCheck">
+                                <label class="form-check-label text-secondary small" for="electiveCheck">
+                                    Is Elective
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid #334155;">
+                    <button type="button" class="btn btn-sms-outline" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-sms-primary">Save Subject</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Assign Subject to Class Modal -->
+<div class="modal fade" id="assignSubjectModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background-color: #1E293B; border: 1px solid #334155; color: #F8FAFC;">
+            <div class="modal-header" style="border-bottom: 1px solid #334155;">
+                <h5 class="modal-title fw-bold">
+                    <i class="bi bi-link-45deg text-primary me-2"></i> Allocate Subject to Class
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form th:action="@{/teacher/subjects/assign-class}" method="post">
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small fw-semibold">Select Class *</label>
+                        <select class="form-select sms-input" name="classId" required>
+                            <option th:each="c : ${classes}" th:value="${c.id}" th:text="${c.name} + ' (Sec ' + ${c.section} + ')'"></option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small fw-semibold">Select Subject *</label>
+                        <select class="form-select sms-input" name="subjectId" required>
+                            <option th:each="s : ${subjects}" th:value="${s.id}" th:text="${s.code} + ' - ' + ${s.name}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid #334155;">
+                    <button type="button" class="btn btn-sms-outline" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-sms-primary">Confirm Allocation</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>
+

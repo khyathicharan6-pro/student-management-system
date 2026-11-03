@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Examination Management')}"></head>
+<body>
+
+<div th:replace="~{fragments/sidebar :: sidebar(${activePage})}"></div>
+
+<div id="sms-content">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="p-4">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+            <div>
+                <h3 class="fw-bold text-light mb-1">Examination & Assessment Setup</h3>
+                <p class="text-secondary small mb-0">Create examination cycles, configure maximum/passing marks, and schedule tests.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-sms-outline d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#addAssessmentModal">
+                    <i class="bi bi-file-earmark-plus"></i> Add Subject Test
+                </button>
+                <button type="button" class="btn btn-sms-primary d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#addExamModal">
+                    <i class="bi bi-plus-circle-fill"></i> New Exam Cycle
+                </button>
+            </div>
+        </div>
+
+        <!-- Feedback Alerts -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show small py-2 px-3 mb-4" role="alert" style="background-color: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.3); color: #6EE7B7;">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <span th:text="${successMessage}">Success</span>
+            <button type="button" class="btn-close btn-close-white small" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show small py-2 px-3 mb-4" role="alert" style="background-color: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); color: #FCA5A5;">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <span th:text="${errorMessage}">Error</span>
+            <button type="button" class="btn-close btn-close-white small" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Exams List Card -->
+        <div class="sms-card">
+            <div class="sms-card-header">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-clipboard2-check-fill text-primary"></i>
+                    <span>College Examination Cycles</span>
+                </div>
+                <span class="badge bg-primary-subtle text-primary border small" th:text="${exams.size()} + ' Exams'">0</span>
+            </div>
+            <div class="sms-card-body p-0">
+                <div class="table-responsive">
+                    <table class="table sms-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Exam Name</th>
+                                <th>Type</th>
+                                <th>Date Range</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${#lists.isEmpty(exams)}">
+                                <td colspan="5" class="text-center py-4 text-secondary">
+                                    No examinations configured yet.
+                                </td>
+                            </tr>
+                            <tr th:each="e : ${exams}">
+                                <td class="fw-bold text-light" th:text="${e.name}">Midterm Examination</td>
+                                <td><span class="badge bg-dark border text-light" th:text="${e.examType}">MID_EXAM</span></td>
+                                <td class="text-secondary small" th:text="${e.startDate} + ' to ' + ${e.endDate}">Dates</td>
+                                <td><span class="badge bg-success-subtle text-success border small">Active</span></td>
+                                <td>
+                                    <a th:href="@{/teacher/marks(classId=${classes[0].id})}" class="btn btn-sm btn-sms-primary py-1 px-2">
+                                        <i class="bi bi-pencil-square me-1"></i> Enter Marks
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</div>
+
+<!-- Add Exam Modal -->
+<div class="modal fade" id="addExamModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background-color: #1E293B; border: 1px solid #334155; color: #F8FAFC;">
+            <div class="modal-header" style="border-bottom: 1px solid #334155;">
+                <h5 class="modal-title fw-bold">
+                    <i class="bi bi-plus-circle text-primary me-2"></i> Create Examination Cycle
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form th:action="@{/teacher/exams/add}" method="post" th:object="${newExam}">
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small fw-semibold">Exam Title *</label>
+                        <input type="text" class="form-control sms-input" th:field="*{name}" placeholder="e.g. Midterm Examination Fall 2025" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small fw-semibold">Examination Type *</label>
+                        <select class="form-select sms-input" th:field="*{examType}" required>
+                            <option value="INTERNAL_ASSESSMENT">Internal Assessment</option>
+                            <option value="MID_EXAM">Mid Examination</option>
+                            <option value="ASSIGNMENT">Assignment</option>
+                            <option value="PRACTICAL">Practical Examination</option>
+                            <option value="FINAL_EXAM">Final Examination</option>
+                        </select>
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label text-secondary small fw-semibold">Academic Year *</label>
+                            <select class="form-select sms-input" th:field="*{academicYearId}" required>
+                                <option th:each="ay : ${academicYears}" th:value="${ay.id}" th:text="${ay.name}"></option>
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label text-secondary small fw-semibold">Semester *</label>
+                            <select class="form-select sms-input" th:field="*{semesterId}" required>
+                                <option th:each="s : ${semesters}" th:value="${s.id}" th:text="${s.name}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <label class="form-label text-secondary small fw-semibold">Start Date *</label>
+                            <input type="date" class="form-control sms-input" th:field="*{startDate}" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label text-secondary small fw-semibold">End Date *</label>
+                            <input type="date" class="form-control sms-input" th:field="*{endDate}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid #334155;">
+                    <button type="button" class="btn btn-sms-outline" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-sms-primary">Create Exam</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Add Assessment Modal -->
+<div class="modal fade" id="addAssessmentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background-color: #1E293B; border: 1px solid #334155; color: #F8FAFC;">
+            <div class="modal-header" style="border-bottom: 1px solid #334155;">
+                <h5 class="modal-title fw-bold">
+                    <i class="bi bi-file-earmark-plus text-primary me-2"></i> Add Subject Test to Exam
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form th:action="@{/teacher/exams/assessment/add}" method="post" th:object="${newAssessment}">
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small fw-semibold">Examination Cycle *</label>
+                        <select class="form-select sms-input" th:field="*{examId}" required>
+                            <option th:each="e : ${exams}" th:value="${e.id}" th:text="${e.name}"></option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small fw-semibold">Class Cohort *</label>
+                        <select class="form-select sms-input" th:field="*{classId}" required>
+                            <option th:each="c : ${classes}" th:value="${c.id}" th:text="${c.name} + ' (Sec ' + ${c.section} + ')'"></option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small fw-semibold">Subject *</label>
+                        <select class="form-select sms-input" th:field="*{subjectId}" required>
+                            <option th:each="s : ${subjects}" th:value="${s.id}" th:text="${s.code} + ' - ' + ${s.name}"></option>
+                        </select>
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label text-secondary small fw-semibold">Max Marks *</label>
+                            <input type="number" step="0.5" class="form-control sms-input" th:field="*{maximumMarks}" value="50.0" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label text-secondary small fw-semibold">Passing Marks *</label>
+                            <input type="number" step="0.5" class="form-control sms-input" th:field="*{passingMarks}" value="20.0" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="form-label text-secondary small fw-semibold">Assessment Date *</label>
+                        <input type="date" class="form-control sms-input" th:field="*{assessmentDate}" required>
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid #334155;">
+                    <button type="button" class="btn btn-sms-outline" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-sms-primary">Save Assessment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>
+
