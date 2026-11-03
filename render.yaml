@@ -1,9 +1,7 @@
 services:
   - type: web
     name: student-management-system
-    runtime: java
-    buildCommand: "chmod +x mvnw && ./mvnw clean package -DskipTests"
-    startCommand: "java -Xmx400m -jar target/student-management-system-0.0.1-SNAPSHOT.jar"
+    runtime: docker
     healthCheckPath: /login
     envVars:
       - key: DB_HOST
