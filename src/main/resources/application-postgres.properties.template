@@ -21,3 +21,4 @@ spring.flyway.locations=classpath:db/migration
 spring.flyway.url=jdbc:postgresql://<YOUR_SUPABASE_HOST>:5432/postgres?sslmode=require&prepareThreshold=0
 spring.flyway.user=<YOUR_DB_USER>
 spring.flyway.password=<YOUR_DB_PASSWORD>
+

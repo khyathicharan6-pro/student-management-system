@@ -39,6 +39,10 @@ Desktop.ini
 ### Logs & Env ###
 *.log
 *.env
+.env
+
+# Keep the example file
+!.env.example
 
 ### Sensitive Config — never commit real credentials ###
 src/main/resources/application-postgres.properties
