@@ -36,3 +36,4 @@ Write-Host "  Server  : http://localhost:$env:SERVER_PORT" -ForegroundColor Yell
 Write-Host ""
 
 .\mvnw.cmd spring-boot:run
+
